@@ -1,42 +1,51 @@
-# CMPS 6730 Sample Project
+# CMPS 6730 RAG Based Question and Answering system
+# Goals:
+Our goal in this project was to create a RAG Bases Question and Answering system and exeperiment with various chunking methods
+in order to get the best results
 
-This repository contains starter code for the final project in CMPS 4730/6730: Natural Language Processing at Tulane University.
+# Methods Used:
+Our goal is to develop a chatbot that leverages the Retrieval-Augmented Generation (RAG) architecture to provide accurate and contextually relevant responses with minimal retraining. The system comprises of two main modules: a retrieval module that fetches relevant information from the knowledge base and the large language model that generates the final response based on the user query and the retrieved context (see Figure 1 for a high-level diagram)
+![image](https://github.com/user-attachments/assets/f7ab0b0e-1cd3-405b-b3a1-b0b3bb32a646)
 
-The code in this repository will be copied into your team's project repository at the start of class to provide a starting point for your project.
+The system first takes a user query and uses the retrieval module to identify the top five most relevant documents from the knowledge base. These retrieved documents, along
+with the original user query, are then fed into the large language model to generate the response.
 
-You should edit this file to include a summary of the goals, methods, and conclusions of your project.
+1. Retrieval Module
+  The retrieval module or component of our chatbot operates as follows: 
+• Knowledge Base: Our knowledge base is the MS MARCO[2] dataset, an open-source, human-generated machine reading comprehension dataset curated for question answering.
+• Embedding Generation: To represent both user queries and documents within the MS-MARCOdataset as dense vectors, we utilize the Sentence Transformer all-MiniLM-L6
+  v2[5] model. This model is known for generating effective sentence embeddings.
+• Indexing and Similarity Search: For efficient storage and retrieval of these vector embeddings, we employ the FAISS. Specifically, we use the IndexFlatL2[3] index, which
+  performs a flat (brute-force) k-nearest neighbors search based on the Euclidean distance (L2 norm) between the query vector and the document vectors.
+• Retrieval Process: When a user inputs a query (Xq), it is first encoded into an embedding Q(Xq) using the Sentence Transformer model. We then calculate the Euclidean 
+  distance between this query embedding and all document embeddings within our FAISS index. The top five documents with the smallest Euclidean distances (i.e., the most 
+  similar) are retrieved as context.
 
-The structure of the code supports the following:
+2. Large Language Model:
+   The generative component of our chatbot is powered by the microsoft/phi-3-mini-instruct[1] model. This instruction-tuned LLM is designed for high-quality reasoning and 
+   was trained on a publicly available dataset. The retrieved top five documents, along with the original user query, are provided as context to this parameterized LLM (Pθ) 
+   to generate a relevant and informative response. The LLM processes both the non-parametric memory (retrieved documents) and its internal parametric knowledge to produce 
+   the final output.
 
-- A simple web UI using Flask to support a demo of the project
-- A command-line interface to support running different stages of the project's pipeline
-- The ability to easily reproduce your work on another machine by using virtualenv and providing access to external data sources.
+In this project we had experimented with two different chunking stratagies. Chunking is the process of dividing a pargraph into smaller pieces and converting these smaller
+chunks into embeddings for storage into our vector database. These are the following chunking stratagies we have implemented:
+1. Recursive Based Chunking
+2. Token Based Chunking
 
-### Using this repository
+# Experimentation:
+In hopes to find the best performing system we have experimented with both these methods in hopes to find the more effective choice for a system. The following experiments
+were conducted on 50 randomized queries:
+1. Token Based Chunking with Chunk size=200 and no overlapping
+2. Recursive Based Chunking with Chunk size=200 and no overlapping
+3. Recursive Based Chunking with Chunk size=200 and 20% overlapping
+4. Recursive Based Chunking with Chunk size=200 and 50% overlapping
 
-- At the start of the course, students will be divided into project teams. Each team will receive a copy of this starter code in a new repository. E.g.:
-https://github.com/tulane-cmps6730/project-alpha
-- Each team member will then clone their team repository to their personal computer to work on their project. E.g.: `git clone https://github.com/tulane-cmps6730/project-alpha`
-- See [GettingStarted.md](GettingStarted.md) for instructions on using the starter code.
+# Conclusions:
+Based on our observations, the choice of document chunking strategy significantly impacts the performance of the RAG-based question answering system, as measured by the ROUGE-L score. While the average performance is relatively close, the introduction of overlap within the recursive chunking method demonstrates a promising avenue for improvement. Specifically, the recursive strategy with a 50% overlap yielded the highest mean and median ROUGE-L scores across our evaluation set. This suggests that providing more continuous contextual information to the language model can lead to better alignment with the reference answers.
 
 
-### Contents
+![image](https://github.com/user-attachments/assets/041a878b-e8ca-4ef3-9f2c-c540fc447ec0)
 
-- [docs](docs): template to create slides for project presentations
-- [nlp](nlp): Python project code
-- [notebooks](notebooks): Jupyter notebooks for project development and experimentation
-- [report](report): LaTeX report
-- [tests](tests): unit tests for project code
-
-### Background Resources
-
-The following will give you some technical background on the technologies used here:
-
-1. Refresh your Python by completing this online tutorial: <https://www.learnpython.org/> (3 hours)
-2. Create a GitHub account at <https://github.com/>
-3. Setup git by following <https://help.github.com/en/articles/set-up-git> (30 minutes)
-4. Learn git by completing the [Introduction to GitHub](https://lab.github.com/githubtraining/introduction-to-github) tutorial, reading the [git handbook](https://guides.github.com/introduction/git-handbook/), then completing the [Managing merge conflicts](https://lab.github.com/githubtraining/managing-merge-conflicts) tutorial (1 hour).
-5. Install the Python data science stack from <https://www.anaconda.com/distribution/> . **We will use Python 3** (30 minutes)
-6. Complete the scikit-learn tutorial from <https://www.datacamp.com/community/tutorials/machine-learning-python> (2 hours)
-7. Understand how python packages work by going through the [Python Packaging User Guide](https://packaging.python.org/tutorials/) (you can skip the "Creating Documentation" section). (1 hour)
-8. Complete Part 1 of the [Flask tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world), which is the library we will use for making a web demo for your project.
+# Notes:
+1. We have not provided a hugging face API key ain the code. This key can be generated from an induvioduals hugging face account. Add the key in the required cell mentioned in the notebook
+2. While installing the modules you might be asked to restart the session. Restart the session and do not run the same command or the commands before the repsective command
