@@ -47,5 +47,5 @@ Based on our observations, the choice of document chunking strategy significantl
 ![image](https://github.com/user-attachments/assets/041a878b-e8ca-4ef3-9f2c-c540fc447ec0)
 
 # Notes:
-1. We have not provided a hugging face API key ain the code. This key can be generated from an induvioduals hugging face account. Add the key in the required cell mentioned in the notebook
-2. While installing the modules you might be asked to restart the session. Restart the session and do not run the same command or the commands before the repsective command
+1. The code does not currently include a Hugging Face API key. You can generate this key from your personal Hugging Face account. Please add your API key in the designated cell within the notebook.
+2. During module installation, you may be prompted to restart the session. If this happens, restart the session as instructed, but do not re-run the same command or any commands that precede it.
