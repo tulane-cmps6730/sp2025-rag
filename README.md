@@ -10,7 +10,7 @@ Our goal is to develop a chatbot that leverages the Retrieval-Augmented Generati
 The system first takes a user query and uses the retrieval module to identify the top five most relevant documents from the knowledge base. These retrieved documents, along
 with the original user query, are then fed into the large language model to generate the response.
 
-1. Retrieval Module
+1. Retrieval Module:
   The retrieval module or component of our chatbot operates as follows: 
 • Knowledge Base: Our knowledge base is the MS MARCO[2] dataset, an open-source, human-generated machine reading comprehension dataset curated for question answering.
 • Embedding Generation: To represent both user queries and documents within the MS-MARCOdataset as dense vectors, we utilize the Sentence Transformer all-MiniLM-L6
